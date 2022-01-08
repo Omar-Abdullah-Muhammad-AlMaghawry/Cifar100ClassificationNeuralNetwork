@@ -112,7 +112,8 @@ for i in np.random.choice(np.arange(0,len(testLabels)), size = (100,)):
   image = cv2.resize(image,(256,256),interpolation = cv2.INTER_LINEAR)
 
   #write the result on the output img
-  image = cv2.putText(image,names[pred[0]],(15,15),cv2.FONT_HERSHEY_SIMPLEX,0.75,(0,0,0),2, cv2.LINE_AA)
+  image = cv2.putText(image,names[pred[0]],(15,15),cv2.FONT_HERSHEY_SIMPLEX,0.75,(255,100,255),2, cv2.LINE_AA)
   print("[INFO] predicted: {}, Actual : {} ".format(pred[0],np.argmax(testLabels[i])))
-  cv2.imshow("catagory",image)
+  im_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+  cv2.imshow("catagory",im_rgb)
   cv2.waitKey(0)
