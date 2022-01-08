@@ -45,7 +45,7 @@ class DeepLearning :
 
     #6th fully connected
     model.add(Flatten())
-    model.add(Dense(5120))#5120
+    model.add(Dense(7168))#5120==>42,6144 => 44.95
     model.add(Activation(activation))
     model.add(Dropout(0.3))#1st try 0.5
 
@@ -63,5 +63,3 @@ class DeepLearning :
       model.load_weights(weightPath)
     
     return model
-
-
