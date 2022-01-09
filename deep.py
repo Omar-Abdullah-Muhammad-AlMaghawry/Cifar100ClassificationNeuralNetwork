@@ -11,6 +11,7 @@ import argparse
 import cv2
 from tensorflow.python.framework.error_interpolation import interpolate
 from keras import optimizers
+import matplotlib.pyplot as plt
 # from google.colab.patches import cv2_imshow ############################################added for only colab
 #construct args parser and parse yhe args
 argP = argparse.ArgumentParser()
@@ -27,7 +28,7 @@ argP.add_argument("-l",
 argP.add_argument("-w",
                   "--weights",
                   type=str,
-                  default="",
+                  default="cifar100.hdf5",
                   help="(optional) path to weights file")
 args=vars(argP.parse_args())
 print(args["weights"])
@@ -35,6 +36,11 @@ print(args["weights"])
 print(args["savemodel"])
 
 print(args["loadmodel"])
+
+###########################################
+if args["loadmodel"]>0:
+  args["savemodel"] = -1
+###########################################  
 
 #download the dataset
 print("[INFO] Downloading Cifar100 ...")
@@ -75,7 +81,8 @@ print(testLabels.shape)
 
 if args["loadmodel"]<0:
   print("[INFO] training ...")
-  model.fit(trainData,trainLabels,batch_size=120,epochs=20,verbose=1)
+  history = model.fit(trainData,trainLabels,batch_size=120,epochs=20
+  ,verbose=1,validation_data=(testData,testLabels)) 
   print(testData.shape)
   print(testLabels.shape)
 
@@ -88,7 +95,22 @@ if args["loadmodel"]<0:
 if args["savemodel"]  >0:
   print("[INFO] saving the model ...")
   model.save_weights(args["weights"],overwrite=True)
-
+  #draw
+  plt.subplot(121)  
+  plt.title("Error curve for DeepLearning with cnn")
+  plt.xlabel("Epochs")
+  plt.ylabel("categorical_crossentropy")
+  plt.plot(history.history['loss'],'r--')
+  plt.plot(history.history['val_loss'])  
+  plt.legend(['Loss','Valid'])
+  plt.subplot(122)
+  plt.title("Accuracy curve for DeepLearning with cnn")
+  plt.xlabel("Epochs")
+  plt.ylabel("Accuracy")
+  plt.plot(history.history['accuracy'],'r--')
+  plt.plot(history.history['val_accuracy'])  
+  plt.legend(['Accuracy','Valid'])
+  plt.show()
 #done
 names =['apple', 'aquarium_fish', 'baby', 'bear', 'beaver', 'bed', 'bee', 'beetle', 'bicycle', 'bottle', 'bowl', 'boy', 'bridge', 'bus', 'butterfly', 'camel', 'can', 'castle', 'caterpillar', 'cattle', 'chair', 'chimpanzee', 'clock', 'cloud', 'cockroach', 'couch', 'crab', 'crocodile', 'cup', 'dinosaur', 'dolphin', 'elephant', 'flatfish', 'forest', 'fox', 'girl', 'hamster', 'house', 'kangaroo', 'keyboard', 'lamp', 'lawn_mower', 'leopard', 'lion', 'lizard', 'lobster', 'man', 'maple_tree', 'motorcycle', 'mountain', 'mouse', 'mushroom', 'oak_tree', 'orange', 'orchid', 'otter', 'palm_tree', 'pear', 'pickup_truck', 'pine_tree', 'plain', 'plate', 'poppy', 'porcupine', 'possum', 'rabbit', 'raccoon', 'ray', 'road', 'rocket', 'rose', 'sea', 'seal', 'shark', 'shrew', 'skunk', 'skyscraper', 'snail', 'snake', 'spider', 'squirrel', 'streetcar', 'sunflower', 'sweet_pepper', 'table', 'tank', 'telephone', 'television', 'tiger', 'tractor', 'train', 'trout', 'tulip', 'turtle', 'wardrobe', 'whale', 'willow_tree', 'wolf', 'woman', 'worm']
 #randomly chose some pics
